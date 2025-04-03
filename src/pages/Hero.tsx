@@ -20,8 +20,13 @@ import {
   UserPlus,
   X,
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { toast } from 'react-hot-toast';
 
 const HeroPage = () => {
+  const navigate = useNavigate();
+  const { login, register } = useAuth();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignupModal, setShowSignupModal] = useState(false);
   const [email, setEmail] = useState('');
@@ -31,40 +36,37 @@ const HeroPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleLogin = async (e: { preventDefault: () => void; }) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-    
+
     try {
-      // Firebase login logic would go here
-      // await signInWithEmailAndPassword(auth, email, password);
-      console.log('Logging in with:', email, password);
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 800));
+      await login(email, password);
       setShowLoginModal(false);
-    } catch (err) {
-      setError('Invalid email or password. Please try again.');
+      navigate('/dashboard');
+      toast.success('Logged in successfully');
+    } catch (err: any) {
+      setError(err.message || 'Invalid email or password. Please try again.');
+      toast.error(err.message || 'Failed to login');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleSignup = async (e: { preventDefault: () => void; }) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-    
+
     try {
-      // Firebase signup logic would go here
-      // await createUserWithEmailAndPassword(auth, email, password);
-      // await updateProfile(auth.currentUser, { displayName: name });
-      console.log('Signing up with:', name, email, password, company);
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 800));
+      await register(name, email, password, company);
       setShowSignupModal(false);
-    } catch (err) {
-      setError('Failed to create account. Please try again.');
+      navigate('/dashboard');
+      toast.success('Account created successfully');
+    } catch (err: any) {
+      setError(err.message || 'Failed to create account. Please try again.');
+      toast.error(err.message || 'Failed to register');
     } finally {
       setIsLoading(false);
     }
@@ -83,11 +85,11 @@ const HeroPage = () => {
               <a href="#features" className="text-slate-300 hover:text-white px-3 py-2 text-sm">Features</a>
               <a href="#benefits" className="text-slate-300 hover:text-white px-3 py-2 text-sm">Benefits</a>
               <a href="#pricing" className="text-slate-300 hover:text-white px-3 py-2 text-sm">Pricing</a>
-              <button 
+              <button
                 onClick={() => setShowLoginModal(true)}
                 className="text-slate-300 hover:text-white px-3 py-2 text-sm flex items-center"
               >
-                <LogIn className="h-4 w-4 mr-1" /> 
+                <LogIn className="h-4 w-4 mr-1" />
                 Sign In
               </button>
               <button
@@ -105,7 +107,7 @@ const HeroPage = () => {
       <div className="relative overflow-hidden">
         {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-800/30 via-slate-900 to-slate-900"></div>
-        
+
         {/* Hero content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16 relative z-10">
           <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -114,7 +116,7 @@ const HeroPage = () => {
                 Smart Inventory Management for Modern Business
               </h1>
               <p className="mt-6 text-xl text-slate-300">
-                NIMBUS streamlines your inventory operations with real-time analytics, 
+                NIMBUS streamlines your inventory operations with real-time analytics,
                 intelligent forecasting, and automated reordering to keep your business flowing smoothly.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-4">
@@ -124,8 +126,8 @@ const HeroPage = () => {
                 >
                   Start Free Trial <ChevronRight className="h-5 w-5 ml-1" />
                 </button>
-                <a 
-                  href="#demo" 
+                <a
+                  href="#demo"
                   className="bg-slate-800 hover:bg-slate-700 text-white px-6 py-3 rounded-md font-medium text-base border border-slate-700 flex items-center justify-center"
                 >
                   Watch Demo
@@ -187,8 +189,8 @@ const HeroPage = () => {
                     <div className="h-32 flex items-end space-x-2">
                       {[40, 65, 52, 78, 45, 86, 68, 91, 74, 86, 95, 60].map((height, i) => (
                         <div key={i} className="flex-1">
-                          <div 
-                            className="bg-indigo-500/70 rounded-t" 
+                          <div
+                            className="bg-indigo-500/70 rounded-t"
                             style={{ height: `${height}%` }}
                           ></div>
                         </div>
@@ -250,7 +252,7 @@ const HeroPage = () => {
               Everything you need to streamline your supply chain and optimize stock levels.
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Feature 1 */}
             <div className="bg-slate-800 rounded-lg border border-slate-700 p-6 hover:border-indigo-500/50 transition-colors">
@@ -262,7 +264,7 @@ const HeroPage = () => {
                 Monitor stock levels across all locations with instant updates when items are received or sold.
               </p>
             </div>
-            
+
             {/* Feature 2 */}
             <div className="bg-slate-800 rounded-lg border border-slate-700 p-6 hover:border-indigo-500/50 transition-colors">
               <div className="h-12 w-12 rounded-lg bg-indigo-600/20 flex items-center justify-center mb-4">
@@ -273,7 +275,7 @@ const HeroPage = () => {
                 Predict future demand with machine learning models that analyze historical sales data and market trends.
               </p>
             </div>
-            
+
             {/* Feature 3 */}
             <div className="bg-slate-800 rounded-lg border border-slate-700 p-6 hover:border-indigo-500/50 transition-colors">
               <div className="h-12 w-12 rounded-lg bg-indigo-600/20 flex items-center justify-center mb-4">
@@ -284,7 +286,7 @@ const HeroPage = () => {
                 Set dynamic reorder points and let NIMBUS automatically create purchase orders when stock runs low.
               </p>
             </div>
-            
+
             {/* Feature 4 */}
             <div className="bg-slate-800 rounded-lg border border-slate-700 p-6 hover:border-indigo-500/50 transition-colors">
               <div className="h-12 w-12 rounded-lg bg-indigo-600/20 flex items-center justify-center mb-4">
@@ -295,7 +297,7 @@ const HeroPage = () => {
                 Track supplier performance, lead times, and reliability metrics to optimize your supply chain.
               </p>
             </div>
-            
+
             {/* Feature 5 */}
             <div className="bg-slate-800 rounded-lg border border-slate-700 p-6 hover:border-indigo-500/50 transition-colors">
               <div className="h-12 w-12 rounded-lg bg-indigo-600/20 flex items-center justify-center mb-4">
@@ -306,7 +308,7 @@ const HeroPage = () => {
                 Synchronize inventory across e-commerce platforms, retail locations, and warehouses in real-time.
               </p>
             </div>
-            
+
             {/* Feature 6 */}
             <div className="bg-slate-800 rounded-lg border border-slate-700 p-6 hover:border-indigo-500/50 transition-colors">
               <div className="h-12 w-12 rounded-lg bg-indigo-600/20 flex items-center justify-center mb-4">
@@ -330,7 +332,7 @@ const HeroPage = () => {
               Transform your inventory operations and gain a competitive edge.
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div>
               <div className="space-y-12">
@@ -347,7 +349,7 @@ const HeroPage = () => {
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="flex gap-4">
                   <div className="flex-shrink-0">
                     <div className="h-10 w-10 rounded-full bg-indigo-600/20 flex items-center justify-center">
@@ -361,7 +363,7 @@ const HeroPage = () => {
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="flex gap-4">
                   <div className="flex-shrink-0">
                     <div className="h-10 w-10 rounded-full bg-indigo-600/20 flex items-center justify-center">
@@ -377,7 +379,7 @@ const HeroPage = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
               <div className="p-6">
                 <h3 className="text-xl font-bold mb-4">Customer Success Story</h3>
@@ -463,8 +465,6 @@ const HeroPage = () => {
           </div>
         </div>
       </div>
-
-      
 
       {/* Login Modal */}
       {showLoginModal && (
@@ -663,7 +663,7 @@ const HeroPage = () => {
               Choose the plan that's right for your business. All plans include a 14-day free trial.
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-8">
             {/* Basic Plan */}
             <div className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
@@ -702,7 +702,7 @@ const HeroPage = () => {
                 </button>
               </div>
             </div>
-            
+
             {/* Pro Plan */}
             <div className="bg-slate-800 rounded-lg border border-indigo-500 overflow-hidden transform scale-105 shadow-lg">
               <div className="bg-indigo-600 py-2 text-center text-sm font-medium">
@@ -751,7 +751,7 @@ const HeroPage = () => {
                 </button>
               </div>
             </div>
-            
+
             {/* Enterprise Plan */}
             <div className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
               <div className="p-6">
@@ -798,7 +798,7 @@ const HeroPage = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="mt-16 text-center">
             <p className="text-slate-400">
               Need a custom solution? <a href="#" className="text-indigo-400 hover:text-indigo-300">Contact our sales team</a> for a tailored quote.
@@ -816,7 +816,7 @@ const HeroPage = () => {
               Watch how NIMBUS can transform your inventory management process.
             </p>
           </div>
-          
+
           <div className="relative w-full h-0 pb-[56.25%] rounded-lg overflow-hidden">
             <div className="absolute inset-0 bg-slate-700 flex items-center justify-center">
               <div className="text-center">
@@ -831,7 +831,7 @@ const HeroPage = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="mt-16 grid md:grid-cols-3 gap-6">
             <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
               <h3 className="text-lg font-semibold mb-4">Webinar: Inventory Optimization</h3>
@@ -903,7 +903,7 @@ const HeroPage = () => {
             <div>
               <h3 className="text-sm font-semibold text-white uppercase tracking-wider">Company</h3>
               <ul className="mt-4 space-y-2">
-              <li><a href="#" className="text-slate-400 hover:text-white text-sm">About</a></li>
+                <li><a href="#" className="text-slate-400 hover:text-white text-sm">About</a></li>
                 <li><a href="#" className="text-slate-400 hover:text-white text-sm">Careers</a></li>
                 <li><a href="#" className="text-slate-400 hover:text-white text-sm">Blog</a></li>
                 <li><a href="#" className="text-slate-400 hover:text-white text-sm">Contact</a></li>
@@ -917,8 +917,6 @@ const HeroPage = () => {
           </div>
         </div>
       </footer>
-
-      
     </div>
   );
 };
